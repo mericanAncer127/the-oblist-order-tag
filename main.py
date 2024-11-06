@@ -118,27 +118,25 @@ for order in all_unfulfilled_orders:
     meta = get_product_meta_fields_by_id(product_id)
     # Example usage
 
+    value = None
     if meta:
       for field in meta:
         if field['key'] == 'maxdeltime':
           value = field['value']
-          n_days = int(value)*7  # Replace with the number of weeks you want to add
-          if not value:
-            n_days = 3 
-          print(f"maxDelveryTime: {n_days} days")
-          # Parse the date string
-          order_made_at = datetime.fromisoformat(created_at_str)
-          # Add n weeks
-          order_expected_at = order_made_at + timedelta(days=n_days)
+    if not value:
+      n_days = 3 
+    else: n_days = int(value)*7  # Replace with the number of weeks you want to add
+    print(f"maxDelveryTime: {n_days} days")
+    # Parse the date string
+    order_made_at = datetime.fromisoformat(created_at_str)
+    # Add n weeks
+    order_expected_at = order_made_at + timedelta(days=n_days)
 
-          if order_expected_at < get_current_time():
-            handle_late_order(order['tags'], order['id'])
-            order_tagged = True
-          # Print the new date
-          print("Expected Date:", order_expected_at)
-          print("Today:", get_current_time())
-    else:
-        print("Product not found.")
+    if order_expected_at < get_current_time():
+      handle_late_order(order['tags'], order['id'])
+      order_tagged = True
+    # Print the new date
+    print("Expected Date:", order_expected_at)
+    print("Today:", get_current_time())
     if order_tagged:
       break
-      
